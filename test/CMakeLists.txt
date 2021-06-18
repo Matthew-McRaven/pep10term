@@ -10,6 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "**/*.cpp" "*.cpp")
 add_executable (TestTerm ${sources})
 
-target_link_libraries(TestTerm catch)
+target_link_libraries(TestTerm catch RTL-Lib LibTerm builtins) 
 
 add_test (NAME TestTerm COMMAND TestTerm)
