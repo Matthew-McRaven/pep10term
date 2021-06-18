@@ -5,3 +5,5 @@ build
 build-*
 __pycache__
 .DS_Store
+# Ignore the generated header for about.txt
+gen_about.h

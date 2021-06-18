@@ -7,6 +7,7 @@
 #include "formatter.hpp"
 #include "strings.hpp"
 #include "term_version.hpp"
+#include "gen_about.h"
 
 struct command_line_values {
 	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false};
@@ -179,11 +180,7 @@ void handle_about(command_line_values &values, int64_t)
 	values.had_about = true;
 	std::cout << fmt::format("{} {}.{}", application_name, PepTerm_VERSION_MAJOR, PepTerm_VERSION_MINOR) << std::endl;
 	std::cout << "Based on commit: "<< Version::GIT_SHA1 << std::endl;
-	// TODO: XXD the about text and display it here.
-	/*QFile aboutFile(":/help-term/about.txt");
-	aboutFile.open(QIODevice::ReadOnly | QIODevice::Text);
-	std::cout<< aboutFile.readAll().toStdString() << std::endl;*/
-	//aboutFile.close();
+	std::cout << about_txt << std::endl;
 }
 void handle_asm(command_line_values &values){}
 void handle_run(command_line_values &values){}

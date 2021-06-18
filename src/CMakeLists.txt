@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 project(PepTerm VERSION 10.0)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Run clang tidy iff it is installed and on the path.
 find_program(CLANG_TIDY "clang-tidy")
@@ -9,6 +11,10 @@ find_program(CLANG_TIDY "clang-tidy")
 if(CLANG_TIDY AND  (NOT EMSCRIPTEN))
 	set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,clang-analyzer-*)
 endif()
+
+find_package( PythonInterp 3.7 REQUIRED )
+# Generate the registration code at configure time rather than build time
+execute_process(COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/gen.py")
 
 configure_file(term_version.hpp.in term_version.hpp)
 find_package(Git)

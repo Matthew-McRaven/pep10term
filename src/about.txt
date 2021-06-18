@@ -1,5 +1,3 @@
-Pep/10 Terminal version {}.{}
-
 Check for updates:
        https://gitlab.com/pep10/pep10term/-/releases
 
