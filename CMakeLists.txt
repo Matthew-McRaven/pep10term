@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-# set the project name
-project(PepTerm VERSION 10.0)
+
 
 # Magic code from:
 # 	https://dpiepgrass.medium.com/cmake-fights-against-disabling-in-source-builds-ab1d71c1d26f

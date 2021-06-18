@@ -1,0 +1,19 @@
+// the configured options and settings for Tutorial
+#define PepTerm_VERSION_MAJOR @PepTerm_VERSION_MAJOR@
+#define PepTerm_VERSION_MINOR @PepTerm_VERSION_MINOR@
+
+#pragma once
+
+#include <string>
+
+
+struct Version
+{
+    static const std::string GIT_SHA1;
+    static const std::string GIT_DATE;
+    static const std::string GIT_COMMIT_SUBJECT;
+};
+
+const std::string Version::GIT_SHA1 = "@GIT_SHA1@";
+const std::string Version::GIT_DATE = "@GIT_DATE@";
+const std::string Version::GIT_COMMIT_SUBJECT = "@GIT_COMMIT_SUBJECT@";
