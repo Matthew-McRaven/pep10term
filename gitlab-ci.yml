@@ -1,0 +1,21 @@
+image: docker:19
+
+stages:
+  - test
+
+variables:
+  BUILD_VERSION: v0.4.1
+
+Test Linux:
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  stage: test
+  image: registry.gitlab.com/pep10/libsim/emboost:${BUILD_VERSION}
+  needs: [Build Linux]
+  script:
+    - source /emsdk/emsdk_env.sh
+    - export CXX=$(which clang++)
+    - export C=$(which clang)
+    - mkdir build && cd build
+    - cmake ../
+    - make -j20 && make test
