@@ -11,7 +11,7 @@ Test Linux:
     GIT_SUBMODULE_STRATEGY: recursive
   stage: test
   image: registry.gitlab.com/pep10/libsim/emboost:${BUILD_VERSION}
-  needs: [Build Linux]
+  needs: []
   script:
     - source /emsdk/emsdk_env.sh
     - export CXX=$(which clang++)
