@@ -2,7 +2,7 @@ Check for updates:
        https://gitlab.com/pep10/pep10term/-/releases
 
 Authors
-       Matthew McRaven (matthew.mcraven@gmail.edu)
+       Matthew McRaven (matthew.mcraven@gmail.com)
        J. Stanley Warford (Stan.Warford@pepperdine.edu)
        Emily Dimpfl (Emily.Dimpfl@gmail.com)
 
