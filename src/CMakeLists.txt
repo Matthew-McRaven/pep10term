@@ -53,7 +53,7 @@ list(FILTER sources EXCLUDE REGEX ".*main.cpp$")
 # Build a library containing all code not related to the TUI.
 add_library(LibTerm STATIC ${sources})
 target_include_directories(LibTerm PUBLIC ${Boost_INCLUDE_DIR} CLI11)
-target_link_libraries(LibTerm PUBLIC ${Boost_LIBRARIES} CLI11 RTL-Lib)
+target_link_libraries(LibTerm PUBLIC ${Boost_LIBRARIES} CLI11 RTL-Lib builtins)
 
 # Add the executable, which contains the TUI.
 add_executable(PepTerm "main.cpp")

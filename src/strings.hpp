@@ -5,11 +5,13 @@
 const std::string application_name = "Pep10Term";
 const std::string application_description = "Translate and run Pep/10 assembly language and microcode programs.";
 
+const std::string figure_description = "Print a figure from the textbook.";
 const std::string asm_description = "Assemble a Pep/10 assembler source code program to object code.";
 const std::string run_description = "Run a Pep/10 object code program.";
 const std::string cpuasm_description = "Check a Pep/10 microcode program for syntax errors.";
 const std::string cpurun_description = "Run a Pep/10 microcode program.";
 
+const std::string figure_description_detailed = "TODO";
 const std::string asm_description_detailed = "The source_file must be a .pep file. \
 The object_file must be a .pepo file. \
 If there are assembly errors, an error log file named <source_file>_errLog.txt is created with the error messages. \
@@ -33,7 +35,10 @@ If -p is specified, then all UnitPre and UnitPost statements in microcode_file a
 The UnitPre and UnitPost statments from precondition_file will be used instead. \
 The precondition_file must be a .pepcpu file.";
 
+const std::string figure_chapter_number_text = "Chapter number for the figure to fetch.";
+const std::string figure_figure_name_text = "Figure name for the figure to text.";
 const std::string asm_input_file_text = "Input Pep/10 source program for assembler.";
+const std::string asm_input_os_text = "Input Pep/10 operating system for assembler.";
 const std::string asm_output_file_text = "Output object code generated from source.";
 const std::string asm_run_log = "Override the name of the default error log file.";
 const std::string obj_input_file_text = "Input Pep/10 object code program for simulator.";
@@ -49,3 +54,7 @@ const std::string cpu_full_control = "Assemble the microprogram with the full co
 
 const std::string cpu_preconditions = "Input Pep/10 microcode source program for microassembler.";
 const std::string cpu_run_log = "Override the name of the default error log file.";
+
+const std::string err_fail_to_open = "Could not open file: {}.";
+const std::string err_bad_source        = "Errors/warnings encountered while generating output for file: {}.";
+const std::string dbg_assemble      = "About to assemble {} into object file {}.";

@@ -1,23 +1,31 @@
 #include <iostream>
 #include <map>
+#include <fstream>
+#include <filesystem>
+
 
 #include <fmt/core.h>
 #include "CLI11.hpp"
 
+#include "asmb/pep10/create_driver.hpp"
+#include "assemble.hpp"
 #include "formatter.hpp"
+#include "gen_about.h"
 #include "strings.hpp"
 #include "term_version.hpp"
-#include "gen_about.h"
+#include "utils.hpp"
 
 struct command_line_values {
 	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false};
-	std::string e{}, s{}, o{}, i{}, mc{}, p{};
+	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{};
 	uint64_t m{2500};
+	uint64_t ch;
 };
 
 void handle_full_control(command_line_values&);
 void handle_version(command_line_values&, int64_t);
 void handle_about(command_line_values&, int64_t);
+void handle_figure(command_line_values&);
 void handle_asm(command_line_values&);
 void handle_run(command_line_values&);
 //void handle_cpuasm(command_line_values&);
@@ -52,6 +60,22 @@ int main(int argc, char *argv[])
 	std::string about_string =  "Display information about licensing, Qt, and developers.";
 	auto about_flag = parser.add_flag("--about", [&](int64_t flag){handle_about(values,flag);}, about_string);
 
+	// Subcommands for FIGURE
+	// Must create map for flag value names.
+	parameter_formatting.insert_or_assign("figure", std::map<std::string,std::string>());
+	auto figure_subcommand = parser.add_subcommand("figure", figure_description);
+	// Create detailed description.
+	detailed_descriptions["figure"] = figure_description_detailed;
+	// Chapter number for figure.
+	figure_subcommand->add_option("--ch", values.ch, figure_chapter_number_text)->expected(1)->required(1);
+	parameter_formatting["figure"]["ch"] = "chapter";
+	// Figure name for figure.
+	figure_subcommand->add_option("--fig", values.fig, figure_figure_name_text)->expected(1)->required(1);
+	parameter_formatting["figure"]["fig"] = "figure_name";
+	// Create a runnable application from command line arguments.
+	figure_subcommand->callback(std::function<void()>([&](){handle_figure(values);}));
+
+
 	// Subcommands for ASSEMBLE
 	// Must create map for flag value names.
 	parameter_formatting.insert_or_assign("asm", std::map<std::string,std::string>());
@@ -64,6 +88,9 @@ int main(int argc, char *argv[])
 	// File from which Pep/9 assembly code will be loaded.
 	asm_subcommand->add_option("-s", values.s, asm_input_file_text)->expected(1)->required(1);
 	parameter_formatting["asm"]["s"] = "source_file";
+	// File from which Pep/9 os code will be loaded.
+	asm_subcommand->add_option("--os", values.os, asm_input_os_text)->expected(1);
+	parameter_formatting["asm"]["os"] = "operating_system";
 	// File to which object code will be written.
 	asm_subcommand->add_option("-o", values.o, asm_output_file_text)->expected(1)->required(1);
 	parameter_formatting["asm"]["o"] = "object_file";
@@ -152,15 +179,9 @@ int main(int argc, char *argv[])
 		if(values.had_about || values.had_version) return 0;
 		return parser.exit(e);
 	}
-
-	/*
-	* This asynchronous approach must be used, because if quit() is called
-	* before a.exec() happens, then the application will not actually quit.
-	* So, by causing the task to be scheduled via the event loop, we allow
-	* the task to be scheduled via the main event loop.
-	*
-	*/
-	// TODO: Launch a thread that does all of our work.
+	// All parsing was done in the try block. 
+	// If no errors were raised, then by definition it succeeded.
+	return 0;
 }
 
 void handle_full_control(command_line_values &values, bool use_full_control)
@@ -179,11 +200,46 @@ void handle_about(command_line_values &values, int64_t)
 {
 	values.had_about = true;
 	std::cout << fmt::format("{} {}.{}", application_name, PepTerm_VERSION_MAJOR, PepTerm_VERSION_MINOR) << std::endl;
-	std::cout << "Based on commit: "<< Version::GIT_SHA1 << std::endl;
+	std::cout << "Based on commit: "<< Version::GIT_SHA1 << std::endl << std::endl;
 	std::cout << about_txt << std::endl;
 }
-void handle_asm(command_line_values &values){}
-void handle_run(command_line_values &values){}
+
+void handle_figure(command_line_values &values)
+{
+	auto figure = read_figure(values.ch, values.fig, element_type::kPep);
+	std::cout << fmt::format("Computer Systems, 6th edition.\nFigure {}.{}", values.ch, values.fig) << std::endl << std::endl;
+	if(!figure) std::cout << "Figure not found!" << std::endl;
+	else std::cout << *figure << std::endl;
+}
+void handle_asm(command_line_values &values)
+{
+	if(!std::filesystem::exists(values.s)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.s), -1);
+	else if(!std::filesystem::exists(values.o)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.o), -1);
+
+	auto text_source = read_file_or_resource(values.s);
+	std::string text_os;
+	if(!values.os.empty()) {
+		if(!std::filesystem::exists(values.os)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.os), -1);
+		text_os= read_file_or_resource(values.os);
+	}
+	else {
+		text_os = read_default_os();
+	}
+	auto result = asmb::pep10::driver::assemble(text_source, text_source);
+	throw std::logic_error("Not yet implemented");
+	std::cout << std::get<1>(result)->image; 
+	/*if(result.err_or_warning) {
+		// TODO: Write warnings / errors to file.
+	}*/
+	if(std::get<0>(result)) {
+		CLI::RuntimeError(fmt::format("Assembly failed: {}", ""), -2);
+	}
+
+}
+void handle_run(command_line_values &values)
+{
+	throw std::logic_error("Not yet implemented");
+}
 /*
 TODO: Switch to threads
 void handle_asm(command_line_values &values)
