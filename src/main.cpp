@@ -221,7 +221,7 @@ void handle_about(command_line_values &values, int64_t)
 void handle_macro(command_line_values &values)
 {
 	auto figure = read_macro(values.macro);
-	std::cout << fmt::format("Computer Systems, 6th edition.\nMacro {}" values.macro) << std::endl << std::endl;
+	std::cout << fmt::format("Computer Systems, 6th edition.\nMacro {}", values.macro) << std::endl << std::endl;
 	if(!figure) std::cout << "Figure not found!" << std::endl;
 	else std::cout << *figure << std::endl;
 }
