@@ -17,7 +17,7 @@
 
 struct command_line_values {
 	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false};
-	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{};
+	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{}, macro{};
 	uint64_t m{2500};
 	uint64_t ch;
 };
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
 	// Create detailed description.
 	detailed_descriptions["macro"] = macro_description_detailed;
 	// Name of macro
-	macro_subcommand->add_option("-m", values.m, maco_name_text)->expected(1)->required(1);
-	parameter_formatting["macro"]["m"] = "macro_name";
+	macro_subcommand->add_option("--macro", values.macro, maco_name_text)->expected(1)->required(1);
+	parameter_formatting["macro"]["macro"] = "macro_name";
 	// Create a runnable application from command line arguments.
 	macro_subcommand->callback(std::function<void()>([&](){handle_macro(values);}));
 
@@ -220,8 +220,8 @@ void handle_about(command_line_values &values, int64_t)
 
 void handle_macro(command_line_values &values)
 {
-	auto figure = read_macro(values.m);
-	std::cout << fmt::format("Computer Systems, 6th edition.\nMacr {}.{}", values.ch, values.fig) << std::endl << std::endl;
+	auto figure = read_macro(values.macro);
+	std::cout << fmt::format("Computer Systems, 6th edition.\nMacro {}" values.macro) << std::endl << std::endl;
 	if(!figure) std::cout << "Figure not found!" << std::endl;
 	else std::cout << *figure << std::endl;
 }

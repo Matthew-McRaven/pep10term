@@ -6,7 +6,7 @@
 
 #include "ex_registry.hpp"
 
-std::optional<std::string> read_macrp(std::string macro)
+std::optional<std::string> read_macro(std::string macro)
 {
 	static const auto reg = registry::instance();
 	auto fig = reg.find(macro);
