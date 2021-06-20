@@ -25,6 +25,7 @@ struct command_line_values {
 void handle_full_control(command_line_values&);
 void handle_version(command_line_values&, int64_t);
 void handle_about(command_line_values&, int64_t);
+void handle_macro(command_line_values&);
 void handle_figure(command_line_values&);
 void handle_asm(command_line_values&);
 void handle_run(command_line_values&);
@@ -59,6 +60,19 @@ int main(int argc, char *argv[])
 
 	std::string about_string =  "Display information about licensing, Qt, and developers.";
 	auto about_flag = parser.add_flag("--about", [&](int64_t flag){handle_about(values,flag);}, about_string);
+
+	// Subcommands for FIGURE
+	// Must create map for flag value names.
+	parameter_formatting.insert_or_assign("macro", std::map<std::string,std::string>());
+	auto macro_subcommand = parser.add_subcommand("macro", macro_description);
+	// Create detailed description.
+	detailed_descriptions["macro"] = macro_description_detailed;
+	// Name of macro
+	macro_subcommand->add_option("-m", values.m, maco_name_text)->expected(1)->required(1);
+	parameter_formatting["macro"]["m"] = "macro_name";
+	// Create a runnable application from command line arguments.
+	macro_subcommand->callback(std::function<void()>([&](){handle_macro(values);}));
+
 
 	// Subcommands for FIGURE
 	// Must create map for flag value names.
@@ -202,6 +216,14 @@ void handle_about(command_line_values &values, int64_t)
 	std::cout << fmt::format("{} {}.{}", application_name, PepTerm_VERSION_MAJOR, PepTerm_VERSION_MINOR) << std::endl;
 	std::cout << "Based on commit: "<< Version::GIT_SHA1 << std::endl << std::endl;
 	std::cout << about_txt << std::endl;
+}
+
+void handle_macro(command_line_values &values)
+{
+	auto figure = read_macro(values.m);
+	std::cout << fmt::format("Computer Systems, 6th edition.\nMacr {}.{}", values.ch, values.fig) << std::endl << std::endl;
+	if(!figure) std::cout << "Figure not found!" << std::endl;
+	else std::cout << *figure << std::endl;
 }
 
 void handle_figure(command_line_values &values)

@@ -5,12 +5,14 @@
 const std::string application_name = "Pep10Term";
 const std::string application_description = "Translate and run Pep/10 assembly language and microcode programs.";
 
+const std::string macro_description = "Print a macro from the textbook.";
 const std::string figure_description = "Print a figure from the textbook.";
 const std::string asm_description = "Assemble a Pep/10 assembler source code program to object code.";
 const std::string run_description = "Run a Pep/10 object code program.";
 const std::string cpuasm_description = "Check a Pep/10 microcode program for syntax errors.";
 const std::string cpurun_description = "Run a Pep/10 microcode program.";
 
+const std::string macro_description_detailed = "TODO";
 const std::string figure_description_detailed = "TODO";
 const std::string asm_description_detailed = "The source_file must be a .pep file. \
 The object_file must be a .pepo file. \
@@ -35,6 +37,7 @@ If -p is specified, then all UnitPre and UnitPost statements in microcode_file a
 The UnitPre and UnitPost statments from precondition_file will be used instead. \
 The precondition_file must be a .pepcpu file.";
 
+const std::string maco_name_text = "The name of the macro to be fetched.";
 const std::string figure_chapter_number_text = "Chapter number for the figure to fetch.";
 const std::string figure_figure_name_text = "Figure name for the figure to text.";
 const std::string asm_input_file_text = "Input Pep/10 source program for assembler.";

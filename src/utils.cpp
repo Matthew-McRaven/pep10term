@@ -6,6 +6,15 @@
 
 #include "ex_registry.hpp"
 
+std::optional<std::string> read_macrp(std::string macro)
+{
+	static const auto reg = registry::instance();
+	auto fig = reg.find(macro);
+	if(!fig) return std::nullopt;
+	else return fig->text;
+
+}
+
 std::optional<std::string> read_figure(uint16_t chapter, std::string figure, element_type type)
 {
 	static const auto reg = registry::instance();
@@ -15,6 +24,7 @@ std::optional<std::string> read_figure(uint16_t chapter, std::string figure, ele
 	else return it->second;
 
 }
+
 std::string read_file_or_resource(std::string path)
 {
 	static const auto rc_reg = std::regex("rc://.*");
@@ -25,7 +35,7 @@ std::string read_file_or_resource(std::string path)
 		std::ifstream file_source(path);
 		// Extra () are necessary! Otherwise it won't work.
 		// See: https://stackoverflow.com/a/2912614
-		return std::string( (std::istreambuf_iterator<char>(file_source) ),(std::istreambuf_iterator<char>()));
+		return std::string( (std::istreambuf_iterator<char>(file_source)),(std::istreambuf_iterator<char>()));
 	}
 }
 
