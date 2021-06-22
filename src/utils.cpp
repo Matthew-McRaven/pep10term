@@ -1,12 +1,36 @@
 #include "utils.hpp"
 
 #include <fstream>
+#include <iostream>
 #include <regex>
 
+#include <boost/algorithm/string.hpp>
+#include "fmt/core.h"
 
 #include "ex_registry.hpp"
 
-std::optional<std::string> read_macro(std::string macro)
+std::vector<std::string> split(const std::string& input, const std::string& regex) {
+	std::vector<std::string> ret;
+	boost::split(ret, input ,boost::is_any_of("."));
+	return ret;
+}
+
+std::optional<std::tuple<std::string, int, std::string>> parse_file_as_resource(const std::string& path) {
+	static const auto rc_reg = std::regex("rc://.*");
+	if(std::regex_match(path, rc_reg)) {
+		auto without_prefix = path.substr(5, path.size());
+		auto substrs = split(without_prefix, "\\.");
+		return {{substrs[0], std::stoi(substrs[1]), substrs[2]}};
+	}
+	else return std::nullopt;
+}
+
+bool is_resource(const std::string& path)
+{
+	return static_cast<bool>(parse_file_as_resource(path));
+}
+
+std::optional<std::string> read_macro(const std::string& macro)
 {
 	static const auto reg = registry::instance();
 	auto fig = reg.find(macro);
@@ -15,7 +39,7 @@ std::optional<std::string> read_macro(std::string macro)
 
 }
 
-std::optional<std::string> read_figure(uint16_t chapter, std::string figure, element_type type)
+std::optional<std::string> read_figure(uint16_t chapter, const std::string& figure, element_type type)
 {
 	static const auto reg = registry::instance();
 	auto fig = reg.find("pep10", chapter, figure);
@@ -25,11 +49,14 @@ std::optional<std::string> read_figure(uint16_t chapter, std::string figure, ele
 
 }
 
-std::string read_file_or_resource(std::string path)
+std::string read_file_or_resource(const std::string& path)
 {
-	static const auto rc_reg = std::regex("rc://.*");
-	if(std::regex_match(path, rc_reg)) {
-		throw std::logic_error("Loading a resource is not yet implemented!");
+	if(auto as_rc = parse_file_as_resource(path); as_rc) {
+		auto& [proc, ch, fig] = *as_rc;
+		std::cout << fig << std::endl;
+		auto book_fig = read_figure(ch, fig, element_type::kPep);
+		if(book_fig) return *book_fig;
+		else throw std::logic_error(fmt::format("No such Figure rc://{}/{}.{}", proc, ch, fig));
 	}
 	else {
 		std::ifstream file_source(path);
@@ -41,7 +68,7 @@ std::string read_file_or_resource(std::string path)
 
 std::string read_default_os()
 {
-	throw std::logic_error("Not yet implemented");
+	return *read_figure(9, "00", element_type::kPep);
 }
 
 void write_errors(void* errors, void* error_file)

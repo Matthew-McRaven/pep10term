@@ -280,8 +280,7 @@ void handle_figure(command_line_values &values)
 }
 void handle_asm(command_line_values &values)
 {
-	if(!std::filesystem::exists(values.s)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.s), -1);
-	else if(!std::filesystem::exists(values.o)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.o), -1);
+	if(!std::filesystem::exists(values.s) && !is_resource(values.s)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.s), -1);
 
 	auto text_source = read_file_or_resource(values.s);
 	std::string text_os;
@@ -292,7 +291,7 @@ void handle_asm(command_line_values &values)
 	else {
 		text_os = read_default_os();
 	}
-	auto result = asmb::pep10::driver::assemble(text_source, text_source);
+	auto result = asmb::pep10::driver::assemble(text_source, text_os);
 	throw std::logic_error("Not yet implemented");
 	std::cout << std::get<1>(result)->image; 
 	/*if(result.err_or_warning) {
