@@ -2,7 +2,6 @@ build
 .vscode
 3rd-part/boost/**
 *.code-workspace
-build-*
 __pycache__
 .DS_Store
 # Ignore the generated header for about.txt
