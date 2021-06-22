@@ -5,6 +5,7 @@
 
 
 #include <fmt/core.h>
+#include <magic_enum.hpp>
 #include "CLI11.hpp"
 
 #include "asmb/pep10/create_driver.hpp"
@@ -75,13 +76,13 @@ int main(int argc, char *argv[])
 	// Create a runnable application from command line arguments.
 	macro_subcommand->callback(std::function<void()>([&](){handle_macro(values);}));
 
-		// Subcommands for LS-MACRO
+	// Subcommands for LS-MACRO
 	// Must create map for flag value names.
 	parameter_formatting.insert_or_assign("ls-macros", std::map<std::string,std::string>());
-	auto macro_subcommand = parser.add_subcommand("ls-macros", ls_macros_description);
+	auto ls_macros_subcommand = parser.add_subcommand("ls-macros", ls_macros_description);
 	// Create detailed description.
 	detailed_descriptions["ls-macros"] = ls_macros_description_detailed;
-	macro_subcommand->callback(std::function<void()>([&](){handle_ls_macros(values);}));
+	ls_macros_subcommand->callback(std::function<void()>([&](){handle_ls_macros(values);}));
 
 
 	// Subcommands for FIGURE
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
 	// Create detailed description.
 	detailed_descriptions["ls-figures"] = ls_figures_description_detailed;
 	// Create a runnable application from command line arguments.
-	figure_subcommand->callback(std::function<void()>([&](){handle_ls_figures(values);}));
+	ls_figures_subcommand->callback(std::function<void()>([&](){handle_ls_figures(values);}));
 
 
 	// Subcommands for ASSEMBLE
@@ -246,12 +247,28 @@ void handle_macro(command_line_values &values)
 }
 void handle_ls_macros(command_line_values&)
 {
-	std::cout << "Goodbye, world!" << std::endl;
+	auto ex = registry::instance();
+	std::cout << "Included macros:" << std::endl;
+	for (const auto& macro : ex.macros()) {
+		std::cout << fmt::format("Macro {} ", macro.name) << std::endl;
+	}
+	std::cout << std::endl;
 }
 
 void handle_ls_figures(command_line_values&)
 {
-	std::cout << "Hello, World!" << std::endl;
+	auto ex = registry::instance();
+	std::cout << "Included figures: filetypes" << std::endl;
+	for (const auto& figure : ex.figures()) {
+		std::cout << fmt::format("Figure {}.{}: ", figure.chapter, figure.fig);
+		for(auto type : figure.elements) {
+			auto as_str = magic_enum::enum_name(type.first);
+			std::cout <<  as_str.substr(1, as_str.size()) <<" ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	
 }
 
 void handle_figure(command_line_values &values)
