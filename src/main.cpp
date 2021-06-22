@@ -26,6 +26,8 @@ void handle_full_control(command_line_values&);
 void handle_version(command_line_values&, int64_t);
 void handle_about(command_line_values&, int64_t);
 void handle_macro(command_line_values&);
+void handle_ls_macros(command_line_values&);
+void handle_ls_figures(command_line_values&);
 void handle_figure(command_line_values&);
 void handle_asm(command_line_values&);
 void handle_run(command_line_values&);
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
 	std::string about_string =  "Display information about licensing, Qt, and developers.";
 	auto about_flag = parser.add_flag("--about", [&](int64_t flag){handle_about(values,flag);}, about_string);
 
-	// Subcommands for FIGURE
+	// Subcommands for MACRO
 	// Must create map for flag value names.
 	parameter_formatting.insert_or_assign("macro", std::map<std::string,std::string>());
 	auto macro_subcommand = parser.add_subcommand("macro", macro_description);
@@ -72,6 +74,14 @@ int main(int argc, char *argv[])
 	parameter_formatting["macro"]["macro"] = "macro_name";
 	// Create a runnable application from command line arguments.
 	macro_subcommand->callback(std::function<void()>([&](){handle_macro(values);}));
+
+		// Subcommands for LS-MACRO
+	// Must create map for flag value names.
+	parameter_formatting.insert_or_assign("ls-macros", std::map<std::string,std::string>());
+	auto macro_subcommand = parser.add_subcommand("ls-macros", ls_macros_description);
+	// Create detailed description.
+	detailed_descriptions["ls-macros"] = ls_macros_description_detailed;
+	macro_subcommand->callback(std::function<void()>([&](){handle_ls_macros(values);}));
 
 
 	// Subcommands for FIGURE
@@ -88,6 +98,15 @@ int main(int argc, char *argv[])
 	parameter_formatting["figure"]["fig"] = "figure_name";
 	// Create a runnable application from command line arguments.
 	figure_subcommand->callback(std::function<void()>([&](){handle_figure(values);}));
+
+	// Subcommands for LS-FIGURE
+	// Must create map for flag value names.
+	parameter_formatting.insert_or_assign("ls-figures", std::map<std::string,std::string>());
+	auto ls_figures_subcommand = parser.add_subcommand("ls-figures", ls_figures_description);
+	// Create detailed description.
+	detailed_descriptions["ls-figures"] = ls_figures_description_detailed;
+	// Create a runnable application from command line arguments.
+	figure_subcommand->callback(std::function<void()>([&](){handle_ls_figures(values);}));
 
 
 	// Subcommands for ASSEMBLE
@@ -224,6 +243,15 @@ void handle_macro(command_line_values &values)
 	std::cout << fmt::format("Computer Systems, 6th edition.\nMacro {}", values.macro) << std::endl << std::endl;
 	if(!figure) std::cout << "Figure not found!" << std::endl;
 	else std::cout << *figure << std::endl;
+}
+void handle_ls_macros(command_line_values&)
+{
+	std::cout << "Goodbye, world!" << std::endl;
+}
+
+void handle_ls_figures(command_line_values&)
+{
+	std::cout << "Hello, World!" << std::endl;
 }
 
 void handle_figure(command_line_values &values)
