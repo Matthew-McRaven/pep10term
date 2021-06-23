@@ -12,6 +12,7 @@
 #include "assemble.hpp"
 #include "formatter.hpp"
 #include "gen_about.h"
+#include "masm/utils/listing.hpp"
 #include "strings.hpp"
 #include "term_version.hpp"
 #include "utils.hpp"
@@ -292,14 +293,27 @@ void handle_asm(command_line_values &values)
 		text_os = read_default_os();
 	}
 	auto result = asmb::pep10::driver::assemble(text_source, text_os);
-	throw std::logic_error("Not yet implemented");
-	std::cout << std::get<1>(result)->image; 
+	auto project = std::get<1>(result);
 	/*if(result.err_or_warning) {
 		// TODO: Write warnings / errors to file.
 	}*/
-	if(std::get<0>(result)) {
-		CLI::RuntimeError(fmt::format("Assembly failed: {}", ""), -2);
+	if(!std::get<0>(result)) {
+		throw std::logic_error("Assembly failed.");
 	}
+	auto listing = masm::utils::generate_listing(project->image->user);
+	auto oc = masm::utils::generate_formatted_bytecode(project->image->user);
+	std::cout << listing << std::endl;
+	/*
+	 * Open up listing file
+	 */
+	/*
+	 * Open up object code file
+	 */
+	std::ofstream out_obj(values.o);
+	/*
+	 * Open up ELF file
+	 */
+
 
 }
 void handle_run(command_line_values &values)
