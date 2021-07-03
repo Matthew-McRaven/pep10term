@@ -309,7 +309,7 @@ void handle_asm(command_line_values &values)
 	/*
 	 * Open up object code file
 	 */
-	std::ofstream out_obj(values.o);
+	save_object_code(oc, {values.o});
 	/*
 	 * Open up ELF file
 	 */
