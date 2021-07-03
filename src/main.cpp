@@ -306,6 +306,8 @@ void handle_asm(command_line_values &values)
 	/*
 	 * Open up listing file
 	 */
+	auto listing_file = std::filesystem::path(values.o).replace_extension(".pepl");
+	save_listing(listing, listing_file);
 	/*
 	 * Open up object code file
 	 */
