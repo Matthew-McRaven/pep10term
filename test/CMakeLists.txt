@@ -13,3 +13,7 @@ add_executable (TestTerm ${sources})
 target_link_libraries(TestTerm catch RTL-Lib LibTerm builtins) 
 
 add_test (NAME TestTerm COMMAND TestTerm)
+# Integration tests.
+# Correctness of output will be checked in other tests.
+# Test that we can assemble a figure without crashing.
+add_test(NAME PepTerm COMMAND /../src/PepTerm asm -src://pep10.05.19.pep -o "fig0519.pepo")

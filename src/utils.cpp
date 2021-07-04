@@ -56,7 +56,7 @@ std::string read_file_or_resource(const std::string& path)
 		std::cout << fig << std::endl;
 		auto book_fig = read_figure(ch, fig, element_type::kPep);
 		if(book_fig) return *book_fig;
-		else throw std::logic_error(fmt::format("No such Figure rc://{}/{}.{}", proc, ch, fig));
+		else throw std::logic_error(fmt::format("No such Figure rc://{}.{}.{}", proc, ch, fig));
 	}
 	else {
 		std::ifstream file_source(path);
