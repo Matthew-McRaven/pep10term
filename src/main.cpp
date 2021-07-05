@@ -18,7 +18,8 @@
 #include "utils.hpp"
 
 struct command_line_values {
-	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false};
+	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false},
+		enable_elf{false};
 	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{}, macro{};
 	uint64_t m{2500};
 	uint64_t ch;
@@ -117,6 +118,8 @@ int main(int argc, char *argv[])
 	auto asm_subcommand = parser.add_subcommand("asm", asm_description);
 	// Create detailed description.
 	detailed_descriptions["asm"] = asm_description_detailed;
+	// Flag to enable dumping the object code as ELF in addition to .pepo.
+	asm_subcommand->add_flag("--enable-elf", values.enable_elf, asm_enable_elf);
 	// File where errors will be written. By default, will be written to a file based on object code file name.
 	asm_subcommand->add_option("-e", values.e, asm_run_log)->expected(1);
 	parameter_formatting["asm"]["e"] = "error_file";
@@ -315,6 +318,8 @@ void handle_asm(command_line_values &values)
 	/*
 	 * Open up ELF file
 	 */
+	auto elf_file = std::filesystem::path(values.o).replace_extension(".elf");
+	if(values.enable_elf) project->as_elf->save(elf_file);
 
 
 }

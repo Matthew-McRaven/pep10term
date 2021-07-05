@@ -44,6 +44,7 @@ The precondition_file must be a .pepcpu file.";
 const std::string maco_name_text = "The name of the macro to be fetched.";
 const std::string figure_chapter_number_text = "Chapter number for the figure to fetch.";
 const std::string figure_figure_name_text = "Figure name for the figure to text.";
+const std::string asm_enable_elf = "In addition to a .pepo objetc code file, dump the object code as an ELF file.";
 const std::string asm_input_file_text = "Input Pep/10 source program for assembler.";
 const std::string asm_input_os_text = "Input Pep/10 operating system for assembler.";
 const std::string asm_output_file_text = "Output object code generated from source.";
