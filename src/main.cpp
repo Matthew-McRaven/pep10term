@@ -20,7 +20,7 @@
 struct command_line_values {
 	bool had_version{false}, had_about{false}, had_d2{false}, had_full_control{false}, had_echo_output{false},
 		enable_elf{false};
-	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{}, macro{};
+	std::string e{}, s{}, o{}, i{}, mc{}, p{}, os{}, fig{}, macro{}, obj, elf;
 	uint64_t m{2500};
 	uint64_t ch;
 };
@@ -155,8 +155,14 @@ int main(int argc, char *argv[])
 			->default_val(std::to_string(1000));
 	parameter_formatting["run"]["m"] = "max_steps";
 	// File from which object code will be loaded.
-	run_subcommand->add_option("-s", values.s, obj_input_file_text)->expected(1)->required(true);
-	parameter_formatting["run"]["s"] = "object_file";
+	auto opt_run_obj = run_subcommand->add_option("--obj", values.obj, obj_input_file_text)->expected(1);
+	parameter_formatting["run"]["obj"] = "object_file";
+	// File from which object code will be loaded.
+	auto opt_run_elf = run_subcommand->add_option("--elf", values.elf, elf_input_file_text)->expected(1);
+	parameter_formatting["run"]["elf"] = "elf_file";
+	// Make options mutually exclusive.
+	opt_run_obj->excludes(opt_run_elf);
+	opt_run_elf->excludes(opt_run_obj);
 	// Create a runnable application from command line arguments
 	run_subcommand->callback(std::function<void()>([&](){handle_run(values);}));
 
@@ -211,7 +217,7 @@ int main(int argc, char *argv[])
 	try {
 		parser.parse(argc, argv);
 	} catch(const CLI::ValidationError &e){
-		std::cout <<e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 		return e.get_exit_code();
 	} catch (const CLI::ParseError &e) {
 		if(values.had_about || values.had_version) return 0;
@@ -249,6 +255,7 @@ void handle_macro(command_line_values &values)
 	if(!figure) std::cout << "Figure not found!" << std::endl;
 	else std::cout << *figure << std::endl;
 }
+
 void handle_ls_macros(command_line_values&)
 {
 	auto ex = registry::instance();
@@ -282,6 +289,7 @@ void handle_figure(command_line_values &values)
 	if(!figure) std::cout << "Figure not found!" << std::endl;
 	else std::cout << *figure << std::endl;
 }
+
 void handle_asm(command_line_values &values)
 {
 	if(!std::filesystem::exists(values.s) && !is_resource(values.s)) throw CLI::ValidationError(fmt::format(err_fail_to_open, values.s), -1);
@@ -323,8 +331,12 @@ void handle_asm(command_line_values &values)
 
 
 }
+
 void handle_run(command_line_values &values)
 {
+	if(values.obj.empty() && values.elf.empty()) {
+		throw CLI::ValidationError("Either --elf or --obj is required, but neither was supplied.", -1);
+	}
 	throw std::logic_error("Not yet implemented");
 }
 /*
