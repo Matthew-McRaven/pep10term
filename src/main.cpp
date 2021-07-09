@@ -334,9 +334,17 @@ void handle_asm(command_line_values &values)
 
 void handle_run(command_line_values &values)
 {
+	ELFIO::elfio reader;
 	if(values.obj.empty() && values.elf.empty()) {
 		throw CLI::ValidationError("Either --elf or --obj is required, but neither was supplied.", -1);
 	}
+	else if(!values.obj.empty()) throw std::logic_error("--obj is not yet implemented.");
+	else reader.load(values.elf);
+
+	// Check that all sections are present via visual inspection.
+	for(auto section : reader.sections) std::cout<<section->get_name()<<std::endl;
+
+
 	throw std::logic_error("Not yet implemented");
 }
 /*
