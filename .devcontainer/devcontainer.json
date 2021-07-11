@@ -1,14 +1,16 @@
 {
     "settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
-		"workbench.colorTheme": "Night Owl"
+		"workbench.colorTheme": "Noctis Viola"
 	},
     "extensions": [
-		"sdras.night-owl",
+		"liviuschera.noctis",
 		"ms-vscode.cpptools",
 		"eamodio.gitlens",
 		"ms-vscode.cmake-tools",
-		"matepek.vscode-catch2-test-adapter"
+		"matepek.vscode-catch2-test-adapter",
+		"jeff-hykin.better-cpp-syntax"
+
 	],
 	"build": {
 		"dockerfile": "Dockerfile",
