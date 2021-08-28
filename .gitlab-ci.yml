@@ -4,7 +4,7 @@ stages:
   - test
 
 variables:
-  BUILD_VERSION: v0.5.1
+  BUILD_VERSION: v0.5.2
 
 Test Linux:
   variables:
