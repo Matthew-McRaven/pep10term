@@ -12,7 +12,11 @@
 #include "assemble.hpp"
 #include "formatter.hpp"
 #include "gen_about.h"
+#include "isa/pep10/from_elf.hpp"
+#include "isa/pep10/local_machine.hpp"
+#include "masm/conversion.hpp"
 #include "masm/utils/listing.hpp"
+#include "run.hpp"
 #include "strings.hpp"
 #include "term_version.hpp"
 #include "utils.hpp"
@@ -341,8 +345,44 @@ void handle_run(command_line_values &values)
 	else if(!values.obj.empty()) throw std::logic_error("--obj is not yet implemented.");
 	else reader.load(values.elf);
 
+	std::string text_input = "";
+	if(!values.i.empty()) {
+		text_input = read_file_or_resource(values.i);
+	}
+	auto bytes_input = std::vector<uint8_t>(text_input.begin(), text_input.end());
 
+	auto machine = isa::pep10::machine_from_elf<false>(reader).value();
+	isa::pep10::load_user_program(reader, machine, isa::pep10::Loader::kDiskIn);
 
+	// Load input.
+	auto charIn = machine->input_device("charIn").value();
+	components::storage::buffer_input(*charIn, bytes_input);
+
+	// Initialize and run machine
+	machine->begin_simulation();
+	auto run_result = isa::pep10::run(machine, values.m);
+	machine->end_simulation();
+
+	// Must create a new endpoint so as to avoid modifying the state of charOut.
+	auto charOut = machine->output_device("charOut").value();
+	auto endpoint = charOut->endpoint()->clone();
+	endpoint->set_to_head();
+
+	// Accumulate bytes written to endpoint into bytes_output.
+	std::vector<uint8_t> bytes_output;
+	// next_value() will return std::nulllopt when no values remain;
+	std::optional<uint8_t> temp = endpoint->next_value();
+	while(temp) {
+		bytes_output.emplace_back(uint8_t{*temp});
+		if(values.had_echo_output) std::cout << (char) *temp;
+		temp = endpoint->next_value();
+	}
+
+	if(values.had_echo_output) std::cout << std::endl;
+	if(!values.o.empty()) save_runtime_output(bytes_output, {values.o});
+	if(run_result.has_error()) {
+		assert(0);
+	}
 }
 /*
 TODO: Switch to threads
