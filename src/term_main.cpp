@@ -380,8 +380,17 @@ void handle_run(command_line_values &values)
 
 	if(values.had_echo_output) std::cout << std::endl;
 	if(!values.o.empty()) save_runtime_output(bytes_output, {values.o});
+	auto log_file = std::filesystem::path(values.o).replace_extension(".log");
 	if(run_result.has_error()) {
-		assert(0);
+		auto msg = run_result.error().message();
+		std::ofstream log(log_file);
+		log << msg.c_str();
+		log.close();
+	}
+	else if(run_result.value() == true) {
+		std::ofstream log(log_file);
+		log << "Possible endless loop detected." << std::endl;
+		log.close();
 	}
 }
 /*
