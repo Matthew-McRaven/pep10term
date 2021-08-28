@@ -56,7 +56,7 @@ target_include_directories(LibTerm PUBLIC ${Boost_INCLUDE_DIR} CLI11)
 target_link_libraries(LibTerm PUBLIC ${Boost_LIBRARIES} CLI11 RTL-Lib builtins)
 
 # Add the executable, which contains the TUI.
-add_executable(PepTerm "main.cpp")
+add_executable(PepTerm "term_main.cpp")
 target_include_directories(PepTerm PUBLIC ${Boost_INCLUDE_DIR} LibTerm CLI11)
 target_link_libraries(PepTerm PUBLIC ${Boost_LIBRARIES} CLI11 RTL-Lib LibTerm builtins fmt)
 
