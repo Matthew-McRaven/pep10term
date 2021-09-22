@@ -331,7 +331,7 @@ void handle_asm(command_line_values &values)
 	 * Open up ELF file
 	 */
 	auto elf_file = std::filesystem::path(values.o).replace_extension(".elf");
-	if(values.enable_elf) project->as_elf->save(elf_file);
+	if(values.enable_elf) project->as_elf->image().save(elf_file);
 
 
 }
