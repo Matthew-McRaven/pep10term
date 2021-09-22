@@ -387,7 +387,7 @@ void handle_run(command_line_values &values)
 		log << msg.c_str();
 		log.close();
 	}
-	else if(run_result.value() == true) {
+	else if(run_result.value() == step::Result::kNominal) {
 		std::ofstream log(log_file);
 		log << "Possible endless loop detected." << std::endl;
 		log.close();
